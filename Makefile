@@ -1,6 +1,6 @@
 target: all
 
-all: hash.o lex.yy.o y.tab.o
+all: hash.o  y.tab.o lex.yy.o
 	gcc -o etapa2  hash.o lex.yy.o y.tab.o
 
 hash.o: hash.c

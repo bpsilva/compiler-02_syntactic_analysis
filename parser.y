@@ -44,14 +44,44 @@
 %%
 
 
-command: var ',' var
-var: '*'		 {printf("var\n");}
+global_var_def: type identifier ':' value
+		|type '$'identifier ':' value
+		|type identifier '[' LIT_INTEGER ']' ':' lit_seq ';'		
+		|type identifier '[' LIT_INTEGER ']'';'
+
+lit_seq: LIT_INTEGER lit_seq_empty
+	|LIT_FALSE lit_seq_empty
+	|LIT_TRUE lit_seq_empty  
+	|LIT_CHAR lit_seq_empty  
+	|LIT_STRING lit_seq_empty  
+ 
+lit_seq_empty:
+	|LIT_INTEGER lit_seq_empty
+	|LIT_FALSE lit_seq_empty
+	|LIT_TRUE lit_seq_empty  
+	|LIT_CHAR lit_seq_empty  
+	|LIT_STRING lit_seq_empty
+
+
+type: 	KW_WORD				
+	| KW_BOOL			
+	| KW_BYTE			
+
+identifier: TK_IDENTIFIER		
+
+value:	LIT_INTEGER 
+	|LIT_FALSE 
+	|LIT_TRUE	  		
+	|LIT_CHAR   			
+	|LIT_STRING			
+
 
 
 %%
 
 int main()
 {
+	
 	return (yyparse());
 
 }
