@@ -44,8 +44,46 @@
 %%
 
 
-global_var_def: type identifier ':' value
-		|type '$'identifier ':' value
+function: type identifier '(' param ')' local_var_def_list command_block
+
+command_block: '{' simple_commands_list'}'
+
+simple_commands_list: 
+		|simple_command simple_commands_list
+
+simple_command: atrib ';' 
+		|flux_control ';'
+		|input ';'
+		|output ';'
+		|return ';'
+
+atrib: identifier '=' expression
+	| identifier '[' expression ']' '=' expression
+
+expression: aritm
+	|logic
+
+aritm: identifier '[' expression -------------
+
+
+
+local_var_def_list: 
+		|local_var_def local_var_def_list
+
+local_var_def: type identifier ':' value ';' 
+		|type '$'identifier ':' value ';'
+
+param: 
+		|type idetifier paramseq
+
+paramseq: 
+		| ',' type idetifier paramseq
+
+global_var_def_list:
+		|global_var_def global_var_def_list
+
+global_var_def: type identifier ':' value ';'
+		|type '$'identifier ':' value ';'
 		|type identifier '[' LIT_INTEGER ']' ':' lit_seq ';'		
 		|type identifier '[' LIT_INTEGER ']'';'
 
