@@ -63,9 +63,16 @@ atrib: identifier '=' expression
 expression: aritm
 	|logic
 
-aritm: identifier '[' expression -------------
+aritm: identifier '[' intexpression ']'
+	|identifier
+	|LIT_INTEGER
 
 
+
+intexpression: LIT_INTEGER op LIT_INTEGER
+		|LIT_INTEGER op intexpression
+
+op: 
 
 local_var_def_list: 
 		|local_var_def local_var_def_list
