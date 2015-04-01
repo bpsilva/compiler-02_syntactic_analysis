@@ -44,35 +44,73 @@
 %%
 
 
-function: type identifier '(' param ')' local_var_def_list command_block
+function_def: type identifier '(' param ')' local_var_def_list '{' simple_commands_list '}'
 
-command_block: '{' simple_commands_list'}'
+function_call: identifier '(' arg ')'
+
+arg: 
+		|idetifier arg_rest
+
+arg_rest: 
+		| ',' idetifier arg_rest
+
 
 simple_commands_list: 
-		|simple_command simple_commands_list
+		|simple_command ';' simple_commands_list
 
-simple_command: atrib ';' 
-		|flux_control ';'
-		|input ';'
-		|output ';'
-		|return ';'
+no_comma_commands_list: 
+		|simple_command no_comma_commands_list
+
+simple_command: 
+		|atrib
+		|flux_control 
+		|input 
+		|output 
+		|return 
 
 atrib: identifier '=' expression
 	| identifier '[' expression ']' '=' expression
 
-expression: aritm
-	|logic
+expression: identifier '[' int_expression ']' expression_rest
+	|identifier expression_rest
+	|value expression_rest 
+	|function_call expression_rest 
+	|'&'identifier
+	|'$'identifier
 
-aritm: identifier '[' intexpression ']'
-	|identifier
-	|LIT_INTEGER
+expression_rest: 
+	|op expression
 
 
+input: KW_INPUT identifier
+output: KW_OUTPUT LIT_STRING out_rest
+	|KW_OUTPUT aritm_exp out_rest
 
-intexpression: LIT_INTEGER op LIT_INTEGER
-		|LIT_INTEGER op intexpression
+out_rest:
+	|',' LIT_STRING outrest
+	|',' aritm_exp outrest
 
-op: 
+aritm_exp | ________________________**************************************
+
+flux_control: KW_IF '('expression')' KW_THEN no_comma_commands_list else
+		|KW_LOOP '(' no_comma_commands_list , expression, no_comma_commands_list ')' no_comma_commands_list
+
+else: 
+	| KW_ELSE no_comma_commands_list
+
+int_expression: LIT_INTEGER
+		|LIT_INTEGER aritm_operator int_expression
+
+op: bool_operator
+	|aritm_operator
+
+bool_operator: '>'
+		|'<'
+	
+aritm_operator: '+'
+		|'-'
+		|'*'
+		|'/'
 
 local_var_def_list: 
 		|local_var_def local_var_def_list
