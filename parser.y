@@ -41,18 +41,24 @@
 %token SYMBOL_LIT_STRING 6 
 %token SYMBOL_IDENTIFIER 7
 
+%left '+' '-'
+%left '*' '/'
+
 %%
 
+program: 
+	|function_def program
+	|global_var_def_list program
 
 function_def: type identifier '(' param ')' local_var_def_list '{' simple_commands_list '}'
 
 function_call: identifier '(' arg ')'
 
 arg: 
-		|idetifier arg_rest
+		|identifier arg_rest
 
 arg_rest: 
-		| ',' idetifier arg_rest
+		| ',' identifier arg_rest
 
 
 simple_commands_list: 
@@ -75,28 +81,33 @@ expression: identifier '[' int_expression ']' expression_rest
 	|identifier expression_rest
 	|value expression_rest 
 	|function_call expression_rest 
-	|'&'identifier
-	|'$'identifier
+	|'&'identifier expression_rest 
+	|'$'identifier expression_rest 
 
 expression_rest: 
 	|op expression
 
 
 input: KW_INPUT identifier
+
 output: KW_OUTPUT LIT_STRING out_rest
 	|KW_OUTPUT aritm_exp out_rest
-
 out_rest:
-	|',' LIT_STRING outrest
-	|',' aritm_exp outrest
+	|',' LIT_STRING out_rest
+	|',' aritm_exp out_rest
 
-aritm_exp | ________________________**************************************
+return: KW_RETURN expression
 
-flux_control: KW_IF '('expression')' KW_THEN no_comma_commands_list else
-		|KW_LOOP '(' no_comma_commands_list , expression, no_comma_commands_list ')' no_comma_commands_list
+aritm_exp: 	SYMBOL_LIT_INTEGER 
+		|SYMBOL_LIT_FLOATING
+		|SYMBOL_LIT_INTEGER  aritm_operator aritm_exp
+		|SYMBOL_LIT_FLOATING aritm_operator aritm_exp
 
-else: 
-	| KW_ELSE no_comma_commands_list
+flux_control: KW_IF '('expression')' KW_THEN no_comma_commands_list KW_ELSE no_comma_commands_list
+		|KW_IF '('expression')' KW_THEN no_comma_commands_list
+		|KW_LOOP '(' no_comma_commands_list ',' expression ',' no_comma_commands_list ')' no_comma_commands_list
+
+
 
 int_expression: LIT_INTEGER
 		|LIT_INTEGER aritm_operator int_expression
@@ -119,10 +130,10 @@ local_var_def: type identifier ':' value ';'
 		|type '$'identifier ':' value ';'
 
 param: 
-		|type idetifier paramseq
+		|type identifier paramseq
 
 paramseq: 
-		| ',' type idetifier paramseq
+		| ',' type identifier paramseq
 
 global_var_def_list:
 		|global_var_def global_var_def_list
