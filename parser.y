@@ -43,6 +43,9 @@
 
 %left '+' '-'
 %left '*' '/'
+%right KW_THEN KW_ELSE
+
+
 
 %%
 
@@ -67,8 +70,7 @@ simple_commands_list:
 no_comma_commands_list: 
 		|simple_command no_comma_commands_list
 
-simple_command: 
-		|atrib
+simple_command: atrib
 		|flux_control 
 		|input 
 		|output 
@@ -92,7 +94,9 @@ input: KW_INPUT identifier
 
 output: KW_OUTPUT LIT_STRING out_rest
 	|KW_OUTPUT aritm_exp out_rest
-out_rest:
+
+out_rest:',' LIT_STRING
+	|',' aritm_exp 
 	|',' LIT_STRING out_rest
 	|',' aritm_exp out_rest
 
@@ -135,7 +139,7 @@ param:
 paramseq: 
 		| ',' type identifier paramseq
 
-global_var_def_list:
+global_var_def_list: global_var_def
 		|global_var_def global_var_def_list
 
 global_var_def: type identifier ':' value ';'
