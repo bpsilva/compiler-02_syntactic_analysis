@@ -54,7 +54,14 @@
 
 program: 
 	|function_def program
-	|global_var_def_list program
+	|global_var_def program
+	;
+
+global_var_def: type identifier ':' value ';'
+		|type '$'identifier ':' value ';'
+		|type identifier '[' LIT_INTEGER ']' ':' lit_seq ';'		
+		|type identifier '[' LIT_INTEGER ']'';'
+
 
 function_def: type identifier '(' param ')' local_var_def_list '{' simple_commands_list '}'
 
@@ -159,13 +166,6 @@ param:
 paramseq: 
 		| ',' type identifier paramseq
 
-global_var_def_list: global_var_def
-		|global_var_def global_var_def_list
-
-global_var_def: type identifier ':' value ';'
-		|type '$'identifier ':' value ';'
-		|type identifier '[' LIT_INTEGER ']' ':' lit_seq ';'		
-		|type identifier '[' LIT_INTEGER ']'';'
 
 lit_seq: LIT_INTEGER lit_seq_empty
 	|LIT_FALSE lit_seq_empty
