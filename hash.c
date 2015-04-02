@@ -31,7 +31,7 @@ int i = 0;
 
 }
 
-void insert(char* text, int type){
+struct hash* insert(char* text, int type){
 	int address = genAddress(text);
 	struct hash *pointer = table[address], *aux = table[address];
 	int achou = 0;
@@ -40,27 +40,24 @@ void insert(char* text, int type){
 	for(;pointer!=0; aux = pointer,	pointer= (struct hash*)pointer->prox)
 	{
 		if(!strcmp(text, pointer->word))
-		{achou = 1;}
+			return pointer;
 	}
 	
-	if(achou == 0)
+	struct hash *node = (struct hash*)malloc(sizeof(struct hash));
+	node->word = (char *)calloc(1, sizeof(text));
+	strcpy(node->word, text);
+	node->prox = 0;
+	node->type = type;
+	
+	if(aux!=0)
 	{
-		struct hash *node = (struct hash*)malloc(sizeof(struct hash));
-		node->word = (char *)calloc(1, sizeof(text));
-		strcpy(node->word, text);
-		node->prox = 0;
-		node->type = type;
-		
-		if(aux!=0)
-		{
-			aux->prox = node;			
-		}
-		else{
-			table[address] = node;
-			}
+		aux->prox = node;			
 	}
+	else{
+		table[address] = node;
+		}
 	
-
+return node;
 }
 
 int genAddress(char* word)

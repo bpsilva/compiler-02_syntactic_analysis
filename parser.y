@@ -1,7 +1,7 @@
 %{
 #include<stdlib.h>
 #include<stdio.h>
-
+#include"hash.h"
 %}
 
 %token KW_WORD  
@@ -45,6 +45,9 @@
 %left '*' '/'
 %right KW_THEN KW_ELSE
 
+%union{
+	struct hash* symbol;
+}
 
 
 %%
@@ -102,9 +105,9 @@ out_rest:',' LIT_STRING
 
 return: KW_RETURN expression
 
-aritm_exp: 	SYMBOL_LIT_INTEGER 
+aritm_exp: 	LIT_INTEGER 
 		|SYMBOL_LIT_FLOATING
-		|SYMBOL_LIT_INTEGER  aritm_operator aritm_exp
+		|LIT_INTEGER  aritm_operator aritm_exp
 		|SYMBOL_LIT_FLOATING aritm_operator aritm_exp
 
 flux_control: KW_IF '('expression')' KW_THEN no_comma_commands_list KW_ELSE no_comma_commands_list
@@ -179,11 +182,12 @@ value:	LIT_INTEGER
 
 int main()
 {
-	
-	return (yyparse());
+
+	exit (yyparse());
 
 }
 
 yyerror(s) char *s; {
-       fprintf( stderr, "%s\n", s );
+       fprintf( stderr, "Syntax error. Linha: %i\n", getLineNumber() );
+	exit(3);
        }

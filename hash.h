@@ -14,7 +14,7 @@ int type;
 hash_node *table[TAM];
 
 void print();
-void insert(char* text, int type);
+struct hash* insert(char* text, int type);
 void initMe();
 int genAddress();
 

@@ -1,9 +1,3 @@
-// UFRGS - Compiladores - Marcelo Johann - 2015/1
-
-word a:0;
-word v[10]:0 0 0 0 0 0 0 0 0 0; 
-word mat[1000];
-word $pt:0;
 
 word main()
 word i:0;

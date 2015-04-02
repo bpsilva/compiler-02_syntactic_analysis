@@ -11,7 +11,7 @@ int isRunning();
 int getLineNumber();
 int yywrap();
 
-int lineNumber;
+int lineNumber = 1;
 int running = TRUE;
 %}
 
@@ -39,12 +39,13 @@ output				{return KW_OUTPUT;}
 "&&"				{return OPERATOR_AND;}
 "||"				{return OPERATOR_OR;}
 "\n"				{lineNumber++;}
-[0-9]+ 				{insert(yytext, LIT_INTEGER);return LIT_INTEGER;}
-FALSE				{insert(yytext, LIT_FALSE);return LIT_FALSE;}
-TRUE				{insert(yytext, LIT_TRUE);return LIT_TRUE;}
-[A-Za-z_][A-Za-z_0-9]*		{insert(yytext, TK_IDENTIFIER);return TK_IDENTIFIER;}
-"'"."'" 			{insert(yytext, LIT_CHAR);return LIT_CHAR;}
-["].*["]			{insert(yytext, LIT_STRING);return LIT_STRING;}
+[0-9]+"."[0-9]+			{insert(yytext, SYMBOL_LIT_FLOATING);return SYMBOL_LIT_FLOATING;}
+[0-9]+ 				{insert(yytext, SYMBOL_LIT_INTEGER);return LIT_INTEGER;}
+FALSE				{insert(yytext, SYMBOL_LIT_FALSE);return LIT_FALSE;}
+TRUE				{insert(yytext, SYMBOL_LIT_TRUE);return LIT_TRUE;}
+[A-Za-z_][A-Za-z_0-9]*		{printf("literal int\n");insert(yytext, SYMBOL_IDENTIFIER);return TK_IDENTIFIER;}
+"'"."'" 			{insert(yytext, SYMBOL_LIT_CHAR);return LIT_CHAR;}
+["].*["]			{insert(yytext, SYMBOL_LIT_STRING);return LIT_STRING;}
 " "
 "//".*
 "/*"				BEGIN(COMMENT);
