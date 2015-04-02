@@ -61,10 +61,21 @@ function_def: type identifier '(' param ')' local_var_def_list '{' simple_comman
 function_call: identifier '(' arg ')'
 
 arg: 
-		|identifier arg_rest
+	|identifier arg_rest
+	|LIT_INTEGER arg_rest
+	|LIT_FALSE arg_rest
+	|LIT_TRUE arg_rest
+	|LIT_CHAR arg_rest
+	|LIT_STRING arg_rest
+
 
 arg_rest: 
 		| ',' identifier arg_rest
+		|',' LIT_INTEGER arg_rest
+		|',' LIT_FALSE arg_rest
+		|',' LIT_TRUE arg_rest
+		|',' LIT_CHAR arg_rest
+		|',' LIT_STRING arg_rest
 
 
 simple_commands_list: 
@@ -79,7 +90,9 @@ simple_command: atrib
 		|output 
 		|return 
 
-atrib: identifier '=' expression
+atrib: '+''+'identifier
+	|identifier '+''+'
+	|identifier '=' expression
 	| identifier '[' expression ']' '=' expression
 
 expression: identifier '[' int_expression ']' expression_rest
@@ -98,10 +111,9 @@ input: KW_INPUT identifier
 output: KW_OUTPUT LIT_STRING out_rest
 	|KW_OUTPUT aritm_exp out_rest
 
-out_rest:',' LIT_STRING
-	|',' aritm_exp 
+out_rest:
 	|',' LIT_STRING out_rest
-	|',' aritm_exp out_rest
+	|',' aritm_exp out_rest ;
 
 return: KW_RETURN expression
 
@@ -110,10 +122,15 @@ aritm_exp: 	LIT_INTEGER
 		|LIT_INTEGER  aritm_operator aritm_exp
 		|SYMBOL_LIT_FLOATING aritm_operator aritm_exp
 
-flux_control: KW_IF '('expression')' KW_THEN no_comma_commands_list KW_ELSE no_comma_commands_list
-		|KW_IF '('expression')' KW_THEN no_comma_commands_list
-		|KW_LOOP '(' no_comma_commands_list ',' expression ',' no_comma_commands_list ')' no_comma_commands_list
+flux_control: KW_IF '('expression')' then
+		|KW_LOOP '(' no_comma_commands_list ';' expression ';' no_comma_commands_list ')' '{'no_comma_commands_list'}'
 
+then: KW_THEN '{'no_comma_commands_list'}'  else
+	|KW_THEN  no_comma_commands_list	else
+
+else: 
+	|KW_ELSE '{'no_comma_commands_list'}'
+	|KW_ELSE no_comma_commands_list
 
 
 int_expression: LIT_INTEGER

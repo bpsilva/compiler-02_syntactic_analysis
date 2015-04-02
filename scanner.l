@@ -43,7 +43,7 @@ output				{return KW_OUTPUT;}
 [0-9]+ 				{insert(yytext, SYMBOL_LIT_INTEGER);return LIT_INTEGER;}
 FALSE				{insert(yytext, SYMBOL_LIT_FALSE);return LIT_FALSE;}
 TRUE				{insert(yytext, SYMBOL_LIT_TRUE);return LIT_TRUE;}
-[A-Za-z_][A-Za-z_0-9]*		{printf("literal int\n");insert(yytext, SYMBOL_IDENTIFIER);return TK_IDENTIFIER;}
+[A-Za-z_][A-Za-z_0-9]*		{insert(yytext, SYMBOL_IDENTIFIER);return TK_IDENTIFIER;}
 "'"."'" 			{insert(yytext, SYMBOL_LIT_CHAR);return LIT_CHAR;}
 ["].*["]			{insert(yytext, SYMBOL_LIT_STRING);return LIT_STRING;}
 " "
