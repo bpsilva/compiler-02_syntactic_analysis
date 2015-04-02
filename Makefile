@@ -16,7 +16,7 @@ y.tab.o: y.tab.c
 	gcc -c y.tab.c
 
 y.tab.c: parser.y
-	yacc parser.y -d -v
+	yacc -d -v parser.y 
 
 clean: 
 	rm *.o

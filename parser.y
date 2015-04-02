@@ -22,32 +22,24 @@
 %token OPERATOR_AND
 %token OPERATOR_OR 
 
-%token TK_IDENTIFIER
-%token LIT_INTEGER 
-%token LIT_FALSE 
-%token LIT_TRUE	  
-%token LIT_CHAR   
-%token LIT_STRING  
-
 %token TOKEN_ERROR 
 
 
-%token SYMBOL_UNDEFINED 0
-%token SYMBOL_LIT_INTEGER 1
-%token SYMBOL_LIT_FLOATING 2
-%token SYMBOL_LIT_TRUE 3
-%token SYMBOL_LIT_FALSE 4
-%token SYMBOL_LIT_CHAR 5
-%token SYMBOL_LIT_STRING 6 
-%token SYMBOL_IDENTIFIER 7
+
+%token UNDEFINED 0
+%token  LIT_INTEGER 1
+%token  LIT_FLOATING 2
+%token  LIT_TRUE 3
+%token  LIT_FALSE 4
+%token LIT_CHAR 5
+%token LIT_STRING 6 
+%token  TK_IDENTIFIER 7
 
 %left '+' '-'
 %left '*' '/'
 %right KW_THEN KW_ELSE
 
-%union{
-	struct hash* symbol;
-}
+
 
 
 %%
@@ -88,9 +80,6 @@ arg_rest:
 simple_commands_list: 
 		|simple_command ';' simple_commands_list
 
-no_comma_commands_list: 
-		|simple_command no_comma_commands_list
-
 simple_command: atrib
 		|flux_control 
 		|input 
@@ -125,19 +114,19 @@ out_rest:
 return: KW_RETURN expression
 
 aritm_exp: 	LIT_INTEGER 
-		|SYMBOL_LIT_FLOATING
+		|LIT_FLOATING
 		|LIT_INTEGER  aritm_operator aritm_exp
-		|SYMBOL_LIT_FLOATING aritm_operator aritm_exp
+		|LIT_FLOATING aritm_operator aritm_exp
 
 flux_control: KW_IF '('expression')' then
-		|KW_LOOP '(' no_comma_commands_list ';' expression ';' no_comma_commands_list ')' '{'no_comma_commands_list'}'
+		|KW_LOOP '(' simple_command ';' expression ';' simple_command ')' '{'simple_commands_list'}'
 
-then: KW_THEN '{'no_comma_commands_list'}'  else
-	|KW_THEN  no_comma_commands_list	else
+then: KW_THEN '{'simple_commands_list'}'  else
+	|KW_THEN   simple_command	else
 
 else: 
-	|KW_ELSE '{'no_comma_commands_list'}'
-	|KW_ELSE no_comma_commands_list
+	|KW_ELSE '{'simple_commands_list'}'
+	|KW_ELSE  simple_command
 
 
 int_expression: LIT_INTEGER
