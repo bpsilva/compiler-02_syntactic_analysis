@@ -24,16 +24,21 @@
 
 %token TOKEN_ERROR 
 
+%union
+{
+	struct hash* symbol;
+	int n;
+}
 
 
-%token UNDEFINED 0
-%token  LIT_INTEGER 1
-%token  LIT_FLOATING 2
-%token  LIT_TRUE 3
-%token  LIT_FALSE 4
-%token LIT_CHAR 5
-%token LIT_STRING 6 
-%token  TK_IDENTIFIER 7
+%token SYMBOL_UNDEFINED 0
+%token  SYMBOL_LIT_INTEGER 1
+%token  SYMBOL_LIT_FLOATING 2
+%token  SYMBOL_LIT_TRUE 3
+%token  SYMBOL_LIT_FALSE 4
+%token SYMBOL_LIT_CHAR 5
+%token SYMBOL_LIT_STRING 6 
+%token  SYMBOL_IDENTIFIER 7
 
 %left '+' '-'
 %left '*' '/'
@@ -51,8 +56,8 @@ program:
 
 global_var_def: type identifier ':' value ';'
 		|type '$'identifier ':' value ';'
-		|type identifier '[' LIT_INTEGER ']' ':' lit_seq ';'		
-		|type identifier '[' LIT_INTEGER ']'';'
+		|type identifier '[' SYMBOL_LIT_INTEGER ']' ':' SYMBOL_LIT_seq ';'		
+		|type identifier '[' SYMBOL_LIT_INTEGER ']'';'
 
 
 function_def: type identifier '(' param ')' local_var_def_list '{' simple_commands_list '}'
@@ -61,20 +66,20 @@ function_call: identifier '(' arg ')'
 
 arg: 
 	|identifier arg_rest
-	|LIT_INTEGER arg_rest
-	|LIT_FALSE arg_rest
-	|LIT_TRUE arg_rest
-	|LIT_CHAR arg_rest
-	|LIT_STRING arg_rest
+	|SYMBOL_LIT_INTEGER arg_rest
+	|SYMBOL_LIT_FALSE arg_rest
+	|SYMBOL_LIT_TRUE arg_rest
+	|SYMBOL_LIT_CHAR arg_rest
+	|SYMBOL_LIT_STRING arg_rest
 
 
 arg_rest: 
 		| ',' identifier arg_rest
-		|',' LIT_INTEGER arg_rest
-		|',' LIT_FALSE arg_rest
-		|',' LIT_TRUE arg_rest
-		|',' LIT_CHAR arg_rest
-		|',' LIT_STRING arg_rest
+		|',' SYMBOL_LIT_INTEGER arg_rest
+		|',' SYMBOL_LIT_FALSE arg_rest
+		|',' SYMBOL_LIT_TRUE arg_rest
+		|',' SYMBOL_LIT_CHAR arg_rest
+		|',' SYMBOL_LIT_STRING arg_rest
 
 
 simple_commands_list: 
@@ -104,19 +109,19 @@ expression_rest:
 
 input: KW_INPUT identifier
 
-output: KW_OUTPUT LIT_STRING out_rest
+output: KW_OUTPUT SYMBOL_LIT_STRING out_rest
 	|KW_OUTPUT aritm_exp out_rest
 
 out_rest:
-	|',' LIT_STRING out_rest
+	|',' SYMBOL_LIT_STRING out_rest
 	|',' aritm_exp out_rest ;
 
 return: KW_RETURN expression
 
-aritm_exp: 	LIT_INTEGER 
-		|LIT_FLOATING
-		|LIT_INTEGER  aritm_operator aritm_exp
-		|LIT_FLOATING aritm_operator aritm_exp
+aritm_exp: 	SYMBOL_LIT_INTEGER 
+		|SYMBOL_LIT_FLOATING
+		|SYMBOL_LIT_INTEGER  aritm_operator aritm_exp
+		|SYMBOL_LIT_FLOATING aritm_operator aritm_exp
 
 flux_control: KW_IF '('expression')' then
 		|KW_LOOP '(' simple_command ';' expression ';' simple_command ')' '{'simple_commands_list'}'
@@ -129,8 +134,8 @@ else:
 	|KW_ELSE  simple_command
 
 
-int_expression: LIT_INTEGER
-		|LIT_INTEGER aritm_operator int_expression
+int_expression: SYMBOL_LIT_INTEGER
+		|SYMBOL_LIT_INTEGER aritm_operator int_expression
 
 op: bool_operator
 	|aritm_operator
@@ -156,31 +161,31 @@ paramseq:
 		| ',' type identifier paramseq
 
 
-lit_seq: LIT_INTEGER lit_seq_empty
-	|LIT_FALSE lit_seq_empty
-	|LIT_TRUE lit_seq_empty  
-	|LIT_CHAR lit_seq_empty  
-	|LIT_STRING lit_seq_empty  
+SYMBOL_LIT_seq: SYMBOL_LIT_INTEGER SYMBOL_LIT_seq_empty
+	|SYMBOL_LIT_FALSE SYMBOL_LIT_seq_empty
+	|SYMBOL_LIT_TRUE SYMBOL_LIT_seq_empty  
+	|SYMBOL_LIT_CHAR SYMBOL_LIT_seq_empty  
+	|SYMBOL_LIT_STRING SYMBOL_LIT_seq_empty  
  
-lit_seq_empty:
-	|LIT_INTEGER lit_seq_empty
-	|LIT_FALSE lit_seq_empty
-	|LIT_TRUE lit_seq_empty  
-	|LIT_CHAR lit_seq_empty  
-	|LIT_STRING lit_seq_empty
+SYMBOL_LIT_seq_empty:
+	|SYMBOL_LIT_INTEGER SYMBOL_LIT_seq_empty
+	|SYMBOL_LIT_FALSE SYMBOL_LIT_seq_empty
+	|SYMBOL_LIT_TRUE SYMBOL_LIT_seq_empty  
+	|SYMBOL_LIT_CHAR SYMBOL_LIT_seq_empty  
+	|SYMBOL_LIT_STRING SYMBOL_LIT_seq_empty
 
 
 type: 	KW_WORD				
 	| KW_BOOL			
 	| KW_BYTE			
 
-identifier: TK_IDENTIFIER		
+identifier: SYMBOL_IDENTIFIER		
 
-value:	LIT_INTEGER 
-	|LIT_FALSE 
-	|LIT_TRUE	  		
-	|LIT_CHAR   			
-	|LIT_STRING			
+value:	SYMBOL_LIT_INTEGER 
+	|SYMBOL_LIT_FALSE 
+	|SYMBOL_LIT_TRUE	  		
+	|SYMBOL_LIT_CHAR   			
+	|SYMBOL_LIT_STRING			
 
 
 
