@@ -44,9 +44,13 @@ extern FILE * yyin;
 
 
 
+
 %left '+' '-'
 %left '*' '/'
 %left '>' '<'
+
+ 
+%left KW_IF KW_ELSE
 
 
 %%
@@ -65,17 +69,18 @@ global_var_def:
 
 function_def: 
 	type SYMBOL_IDENTIFIER '(' param ')' local_var_def_list '{' command_list '}'
-
+	;
 
 arg: 	
-	arg ',' arg
+	|value ',' arg
+	|SYMBOL_IDENTIFIER ',' arg
 	|SYMBOL_IDENTIFIER 
 	|value 
-	
-
+	;
 
 command_list: 
 	|simple_command ';' command_list
+	;
 
 simple_command: 
 	|atrib
@@ -83,12 +88,13 @@ simple_command:
 	|KW_INPUT SYMBOL_IDENTIFIER 
 	|output
 	|KW_RETURN expression
-
+	;
 atrib: 
 	'+''+'SYMBOL_IDENTIFIER
 	|SYMBOL_IDENTIFIER '+''+'
 	|SYMBOL_IDENTIFIER '=' expression
 	| SYMBOL_IDENTIFIER '[' expression ']' '=' expression
+	;
 
 expression:
 	expression '+' expression
@@ -103,16 +109,15 @@ expression:
 	|SYMBOL_IDENTIFIER '(' arg ')'
 	|'&'SYMBOL_IDENTIFIER 
 	|'$'SYMBOL_IDENTIFIER  
-
-
- 
+	;
 
 value:	SYMBOL_LIT_INTEGER 
 	|SYMBOL_LIT_FALSE 
 	|SYMBOL_LIT_TRUE	  		
 	|SYMBOL_LIT_CHAR   			
 	|SYMBOL_LIT_STRING
-
+	;
+	
 output:	KW_OUTPUT out
 	;
 
@@ -121,47 +126,45 @@ out:	out ',' out
 	|expression
 	;
 
-
-
-
 flux_control: 
 	KW_IF '('expression')' then
-		|KW_LOOP '(' simple_command ';' expression ';' simple_command ')' '{'command_list'}'
+	|KW_LOOP '(' simple_command ';' expression ';' simple_command ')' '{'command_list'}'
+	;
 
 then: 
-	KW_THEN '{'command_list'}'  else
-	|KW_THEN   simple_command else
-
+	KW_THEN option else
+	;
 else: 
-	|KW_ELSE '{'command_list'}'
-	|KW_ELSE  simple_command
+	| KW_ELSE option
+	;
+
+option: 
+	'{'command_list'}' 
+	|simple_command 
+	;
 
 local_var_def_list: 	
 	|local_var_def local_var_def_list
 	;
-local_var_def: type SYMBOL_IDENTIFIER ':' value ';' 
-		|type '$'SYMBOL_IDENTIFIER ':' value ';'
 
+local_var_def: type SYMBOL_IDENTIFIER ':' value ';' 
+	|type '$'SYMBOL_IDENTIFIER ':' value ';'
+	;		
 param: 
-		|type SYMBOL_IDENTIFIER paramseq
+	|type SYMBOL_IDENTIFIER paramseq
+	;
 
 paramseq: 
-		| ',' type SYMBOL_IDENTIFIER paramseq
+	| ',' type SYMBOL_IDENTIFIER paramseq
+	;
 
-
-symbol_lit_seq:  value
-		|value symbol_lit_seq
-	 
-
-
-
+symbol_lit_seq:  
+	value
+	|value symbol_lit_seq
+	; 
 type: 	KW_WORD				
 	| KW_BOOL			
 	| KW_BYTE			
-
-			
-
-
 
 %%
 
