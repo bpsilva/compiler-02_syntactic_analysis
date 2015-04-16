@@ -2,6 +2,8 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include"hash.h"
+
+extern FILE * yyin;
 %}
 
 %token KW_WORD  
@@ -40,9 +42,12 @@
 %token SYMBOL_LIT_STRING 6 
 %token  SYMBOL_IDENTIFIER 7
 
+
+
 %left '+' '-'
 %left '*' '/'
-%right KW_THEN KW_ELSE
+%left '>' '<'
+
 
 %%
 
@@ -51,46 +56,47 @@ program:
 	|global_var_def program
 	;
 
-global_var_def: type SYMBOL_IDENTIFIER ':' value ';'
-		|type '$'SYMBOL_IDENTIFIER ':' value ';'
-		|type SYMBOL_IDENTIFIER '[' SYMBOL_LIT_INTEGER ']' ':' symbol_lit_seq ';'		
-		;
+global_var_def: 
+	type SYMBOL_IDENTIFIER ':' value ';'
+	|type '$'SYMBOL_IDENTIFIER ':' value ';'
+	|type SYMBOL_IDENTIFIER '[' SYMBOL_LIT_INTEGER ']' ':' symbol_lit_seq ';'
+	|type SYMBOL_IDENTIFIER '[' SYMBOL_LIT_INTEGER ']'';'		
+	;
 
-function_def: type SYMBOL_IDENTIFIER '(' param ')' local_var_def_list '{' command_list '}'
+function_def: 
+	type SYMBOL_IDENTIFIER '(' param ')' local_var_def_list '{' command_list '}'
 
 
 arg: 	
-	|SYMBOL_IDENTIFIER arg_rest
-	|value arg_rest
+	arg ',' arg
+	|SYMBOL_IDENTIFIER 
+	|value 
 	
 
 
-arg_rest: 
-		| ',' SYMBOL_IDENTIFIER arg_rest
-		| ',' value arg_rest
-
-
 command_list: 
-		|simple_command ';' command_list
+	|simple_command ';' command_list
 
 simple_command: 
-		|atrib
-		|flux_control 
-		|KW_INPUT SYMBOL_IDENTIFIER 
-		|output 
-		|KW_RETURN expression
+	|atrib
+	|flux_control 
+	|KW_INPUT SYMBOL_IDENTIFIER 
+	|output
+	|KW_RETURN expression
 
-atrib: '+''+'SYMBOL_IDENTIFIER
+atrib: 
+	'+''+'SYMBOL_IDENTIFIER
 	|SYMBOL_IDENTIFIER '+''+'
 	|SYMBOL_IDENTIFIER '=' expression
 	| SYMBOL_IDENTIFIER '[' expression ']' '=' expression
 
-expression: expression '+' expression
-	|expression '-' expression
+expression:
+	expression '+' expression
+	|expression '-'expression
 	|expression '*' expression
 	|expression '/' expression
-	|expression "||" expression	
-	|expression "&&" expression	
+	|expression '>' expression 
+	|expression '<' expression
 	|SYMBOL_IDENTIFIER '[' expression ']' 
 	|SYMBOL_IDENTIFIER
 	|value
@@ -98,27 +104,41 @@ expression: expression '+' expression
 	|'&'SYMBOL_IDENTIFIER 
 	|'$'SYMBOL_IDENTIFIER  
 
-output: KW_OUTPUT SYMBOL_LIT_STRING out_rest
-	|KW_OUTPUT expression out_rest
 
-out_rest:
-	|',' SYMBOL_LIT_STRING out_rest
-	|',' expression out_rest ;
+ 
+
+value:	SYMBOL_LIT_INTEGER 
+	|SYMBOL_LIT_FALSE 
+	|SYMBOL_LIT_TRUE	  		
+	|SYMBOL_LIT_CHAR   			
+	|SYMBOL_LIT_STRING
+
+output:	KW_OUTPUT out
+	;
+
+out:	out ',' out
+	SYMBOL_LIT_STRING
+	|expression
+	;
 
 
-flux_control: KW_IF '('expression')' then
+
+
+flux_control: 
+	KW_IF '('expression')' then
 		|KW_LOOP '(' simple_command ';' expression ';' simple_command ')' '{'command_list'}'
 
-then: KW_THEN '{'command_list'}'  else
-	|KW_THEN   simple_command	else
+then: 
+	KW_THEN '{'command_list'}'  else
+	|KW_THEN   simple_command else
 
 else: 
 	|KW_ELSE '{'command_list'}'
 	|KW_ELSE  simple_command
 
-local_var_def_list: 
-		|local_var_def local_var_def_list
-
+local_var_def_list: 	
+	|local_var_def local_var_def_list
+	;
 local_var_def: type SYMBOL_IDENTIFIER ':' value ';' 
 		|type '$'SYMBOL_IDENTIFIER ':' value ';'
 
@@ -129,30 +149,26 @@ paramseq:
 		| ',' type SYMBOL_IDENTIFIER paramseq
 
 
-symbol_lit_seq: 
-		|':' value symbol_lit_seq_empty
+symbol_lit_seq:  value
+		|value symbol_lit_seq
 	 
- symbol_lit_seq_empty:
-	|value  symbol_lit_seq_empty
+
 
 
 type: 	KW_WORD				
 	| KW_BOOL			
 	| KW_BYTE			
 
-value:	SYMBOL_LIT_INTEGER 
-	|SYMBOL_LIT_FALSE 
-	|SYMBOL_LIT_TRUE	  		
-	|SYMBOL_LIT_CHAR   			
-	|SYMBOL_LIT_STRING			
+			
 
 
 
 %%
 
-int main()
+int main(int arc, char **argv)
 {
 
+	yyin = fopen(argv[1], "r");
 	exit (yyparse());
 
 }
