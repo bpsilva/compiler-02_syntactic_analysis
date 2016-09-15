@@ -97,12 +97,7 @@ atrib:
 	;
 
 expression:
-	expression '+' expression
-	|expression '-'expression
-	|expression '*' expression
-	|expression '/' expression
-	|expression '>' expression 
-	|expression '<' expression
+	expression op expression	
 	|SYMBOL_IDENTIFIER '[' expression ']' 
 	|SYMBOL_IDENTIFIER
 	|value
@@ -111,6 +106,19 @@ expression:
 	|'$'SYMBOL_IDENTIFIER  
 	;
 
+op: '+' 	
+	|'-' 	
+	|'*'	
+	|'/'	
+	| '>' 	
+	|'<'	
+	|OPERATOR_EQ	
+	|OPERATOR_GE	
+	|OPERATOR_LE 
+	|OPERATOR_OR 
+	|OPERATOR_AND 
+	|OPERATOR_NE 
+	;
 value:	SYMBOL_LIT_INTEGER 
 	|SYMBOL_LIT_FALSE 
 	|SYMBOL_LIT_TRUE	  		
