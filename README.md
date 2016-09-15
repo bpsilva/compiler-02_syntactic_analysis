@@ -8,6 +8,7 @@ After that you just need to run the Makefile:
 And then execute it feeding a file containing the code to be analysed:  
  **./etapa2 < example**  
  **./etapa2 < example-error**  
+ **./etapa2 < example1**  
 
 The result will be a error message in case of syntactic error or nothing in case of success.
 
