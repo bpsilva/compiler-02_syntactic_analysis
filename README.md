@@ -14,5 +14,5 @@ The result will be a error message in case of syntactic error or nothing in case
 
 ==================================================
 
-To better understand what is the syntactic definition accepted, please take a look in the work description (in portuguese):
-[Work description](https://bitbucket.org/bpsilva/compiler-02_syntactic_analysis/raw/ca77046c56d9f7fafab516dc0e3f3a504c5a924e/definition.pdf)
+To better understand what is the syntactic definition accepted, please take a look in the task description (in portuguese):
+[Task description](https://bitbucket.org/bpsilva/compiler-02_syntactic_analysis/raw/ca77046c56d9f7fafab516dc0e3f3a504c5a924e/definition.pdf)
